@@ -8,13 +8,22 @@
 
 #import <Foundation/Foundation.h>
 
-@interface MQValidationManager : NSObject
+extern NSString * const kMQValidationManagerEmailAddressKey;
+extern NSString * const kMQValidationManagerNameKey;
+extern NSString * const kMQValidationManagerPasswordKey;
+extern NSString * const kMQValidationManagerPhoneNumberKey;
+extern NSString * const kMQValidationManagerUsernameKey;
 
-- (BOOL)validateValue:(NSString *)value forKey:(NSString *)key;
+@interface MQValidationManager : NSObject
 
 + (instancetype)sharedManager;
 
+- (BOOL)validateValue:(NSString *)value forKey:(NSString *)key;
+
 + (NSString *)emailAddressRegex;
++ (NSString *)nameRegex;
++ (NSString *)passwordRegex;
 + (NSString *)phoneNumberRegex;
++ (NSString *)usernameRegex;
 
 @end
