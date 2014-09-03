@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AD08FF2019B7CCDC00B5AE9A /* MQTooltipView.m in Sources */ = {isa = PBXBuildFile; fileRef = AD08FF1F19B7CCDC00B5AE9A /* MQTooltipView.m */; };
 		ADD5C97019B64CAB00D7E6B8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ADD5C96F19B64CAB00D7E6B8 /* Foundation.framework */; };
 		ADD5C97219B64CAB00D7E6B8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ADD5C97119B64CAB00D7E6B8 /* CoreGraphics.framework */; };
 		ADD5C97419B64CAB00D7E6B8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ADD5C97319B64CAB00D7E6B8 /* UIKit.framework */; };
@@ -35,6 +36,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AD08FF1E19B7CCDC00B5AE9A /* MQTooltipView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MQTooltipView.h; sourceTree = "<group>"; };
+		AD08FF1F19B7CCDC00B5AE9A /* MQTooltipView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MQTooltipView.m; sourceTree = "<group>"; };
 		ADD5C96C19B64CAB00D7E6B8 /* MQValidationExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MQValidationExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADD5C96F19B64CAB00D7E6B8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		ADD5C97119B64CAB00D7E6B8 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -160,6 +163,8 @@
 		ADD5C9AB19B64DFC00D7E6B8 /* MQValidation */ = {
 			isa = PBXGroup;
 			children = (
+				AD08FF1E19B7CCDC00B5AE9A /* MQTooltipView.h */,
+				AD08FF1F19B7CCDC00B5AE9A /* MQTooltipView.m */,
 				ADD5C9AC19B64DFC00D7E6B8 /* MQValidationManager.h */,
 				ADD5C9AD19B64DFC00D7E6B8 /* MQValidationManager.m */,
 			);
@@ -264,6 +269,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ADD5C9AE19B64DFC00D7E6B8 /* MQValidationManager.m in Sources */,
+				AD08FF2019B7CCDC00B5AE9A /* MQTooltipView.m in Sources */,
 				ADD5C98019B64CAB00D7E6B8 /* MQAppDelegate.m in Sources */,
 				ADD5C9A619B64DC100D7E6B8 /* MQViewController.m in Sources */,
 				ADD5C97C19B64CAB00D7E6B8 /* main.m in Sources */,

@@ -1,6 +1,6 @@
 //
 //  MQValidationManager.h
-//  MQValidationExample
+//  MQValidation
 //
 //  Created by Paris Pinkney on 9/2/14.
 //  Copyright (c) 2014 Marqeta, Inc. All rights reserved.

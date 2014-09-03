@@ -52,6 +52,8 @@
 	UITextField *textField = [[UITextField alloc] initWithFrame:frame];
 	textField.borderStyle = UITextBorderStyleRoundedRect;
 	textField.delegate = self;
+	textField.rightView = [self rightViewButton];
+	textField.rightViewMode = UITextFieldViewModeAlways;
 	textField.placeholder = placeholder;
 	textField.tag = tag;
 	[textField addTarget:self action:@selector(textFieldTextDidChange:) forControlEvents:UIControlEventEditingChanged];
@@ -61,7 +63,25 @@
 	return textField;
 }
 
+- (UIButton *)rightViewButton
+{
+	UIButton *button = [UIButton buttonWithType:UIButtonTypeInfoDark];
+	button.frame = CGRectMake(0.0f, 0.0f, 40.0f, 30.0f);
+	[button addTarget:self action:@selector(showTooltip:) forControlEvents:UIControlEventTouchUpInside];
+	return button;
+}
+
 #pragma mark - Private methods
+
+- (void)showTooltip:(id)sender
+{
+	if (![sender isKindOfClass:[UIButton class]]) {
+		return;
+	}
+
+	UIButton *button = (UIButton *)sender;
+	NSLog(@"button = %@", button);
+}
 
 - (void)textFieldTextDidChange:(UITextField *)textField;
 {
