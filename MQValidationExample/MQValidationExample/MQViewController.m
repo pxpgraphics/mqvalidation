@@ -8,13 +8,9 @@
 
 #import "MQViewController.h"
 #import "MQValidationManager.h"
-//#import "NBAsYouTypeFormatter.h"
-//#import "NBPhoneMetaDataGenerator.h"
-//#import "NBPhoneNumberUtil.h"
 
 @interface MQViewController () <UITextFieldDelegate>
 
-//@property (nonatomic, strong) NBAsYouTypeFormatter *phoneNumberFormatter;
 @property (nonatomic, strong) UITextField *nameTextField;
 @property (nonatomic, strong) UITextField *emailTextField;
 @property (nonatomic, strong) UITextField *phoneNumberTextField;
@@ -33,9 +29,6 @@
 
 	self.view.backgroundColor = [UIColor grayColor];
 
-//	NBPhoneMetaDataGenerator *generator = [[NBPhoneMetaDataGenerator alloc] init];
-//    [generator generateMetadataClasses];
-
 	self.nameTextField = [self textFieldWithPlaceholder:@"Name"];
 	self.emailTextField = [self textFieldWithPlaceholder:@"Email"];
 	self.phoneNumberTextField = [self textFieldWithPlaceholder:@"Phone"];
@@ -50,14 +43,6 @@
 }
 
 #pragma mark - Custom accessors
-
-//- (NBAsYouTypeFormatter *)phoneNumberFormatter
-//{
-//	if (!_phoneNumberFormatter) {
-//		_phoneNumberFormatter = [[NBAsYouTypeFormatter alloc] initWithRegionCode:@"US"];
-//	}
-//	return _phoneNumberFormatter;
-//}
 
 - (UITextField *)textFieldWithPlaceholder:(NSString *)placeholder
 {
@@ -88,32 +73,19 @@
 	BOOL valid = NO;
 	switch (textField.tag) {
 		case MQViewControllerNameTextFieldTag:
-		{
 			valid = [validationManager validateValue:textField.text forKey:kMQValidationManagerNameKey];
 			break;
-		}
 		case MQViewControllerEmailTextFieldTag:
-		{
 			valid = [validationManager validateValue:textField.text forKey:kMQValidationManagerEmailAddressKey];
 			break;
-		}
 		case MQViewControllerPhoneNumberTextFieldTag:
-		{
-//			NSString *text = [_phoneNumberFormatter inputDigit:[textField.text substringFromIndex:[textField.text length] - 1]];
-//			NSLog(@"- %@", text);
 			valid = [validationManager validateValue:textField.text forKey:kMQValidationManagerPhoneNumberKey];
-			break;
-		}
 		case MQViewControllerUsernameTextFieldTag:
-		{
 			valid = [validationManager validateValue:textField.text forKey:kMQValidationManagerUsernameKey];
 			break;
-		}
 		case MQViewControllerPasswordTextFieldTag:
-		{
 			valid = [validationManager validateValue:textField.text forKey:kMQValidationManagerPasswordKey];
 			break;
-		}
 	}
 
 	NSLog(@"%@ isValid %@", textField.placeholder, valid ? @"YES" : @"NO");
