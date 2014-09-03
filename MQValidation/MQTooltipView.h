@@ -80,6 +80,7 @@ typedef NS_ENUM(NSUInteger, MQTooltipViewAnimation) {
 @property (nonatomic, strong) UIFont *textFont;
 @property (nonatomic, strong) UIFont *titleFont;
 @property (nonatomic, strong) UIView *customView;
+@property (nonatomic, strong, readonly) id targetObject;
 @property (nonatomic, weak) id<MQTooltipViewDelegate> delegate;
 
 - (instancetype)initWithTitle:(NSString *)title message:(NSString *)message;
