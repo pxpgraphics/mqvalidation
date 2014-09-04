@@ -44,7 +44,64 @@
 
 #pragma mark - Lifecycle
 
+- (instancetype)initWithFrame:(CGRect)frame
+{
+	self = [super initWithFrame:frame];
+	if (self) {
+		self.backgroundColor = [UIColor colorWithRed:11.0f/255.0f green:38.0f/255.0f blue:96.0f/255.0f alpha:0.9f];
+		self.opaque = NO;
 
+		_borderWidth = 1.0f;
+		_cornerRadius = 10.0f;
+		_horizontalMargins = 2.0f;
+		_pointerSize = 12.0f;
+		_textAlignment = NSTextAlignmentCenter;
+		_textColor = [UIColor whiteColor];
+		_textFont = [UIFont fontWithName:@"AvenirNext-Regular" size:[UIFont systemFontSize]];
+		_verticalMargins = 2.0f;
+        _animation = MQTooltipViewAnimationSlide;
+        _borderColor = [UIColor blackColor];
+        _dismissTapAnywhere = NO;
+        _gradientBackground = YES;
+        _pointDirection = MQTooltipViewPointDirectionAny;
+        _shadow = NO;
+	}
+	return self;
+}
+
+- (instancetype)initWithCustomView:(UIView *)customView
+{
+	self = [self initWithFrame:CGRectZero];
+	if (self) {
+		_customView = customView;
+		[self addSubview:_customView];
+	}
+	return self;
+}
+
+- (instancetype)initWithMessage:(NSString *)message
+{
+	self = [self initWithFrame:CGRectZero];
+	if (self) {
+		_message = message;
+	}
+	return self;
+}
+
+- (instancetype)initWithTitle:(NSString *)title message:(NSString *)message
+{
+	self = [self initWithFrame:CGRectZero];
+	if (self) {
+		_message = message;
+		_textColor = [UIColor whiteColor];
+		_textFont = [UIFont fontWithName:@"AvenirNext-Regular" size:[UIFont systemFontSize]];
+		_title = title;
+		_titleAlignment = NSTextAlignmentCenter;
+		_titleColor = [UIColor whiteColor];
+		_titleFont = [UIFont fontWithName:@"AvenirNext-Medium" size:[UIFont labelFontSize]];
+	}
+	return self;
+}
 
 #pragma mark - Custom accessors
 
@@ -318,6 +375,281 @@
 		CGRect contentFrame = [self contentFrame];
 		self.customView.frame = contentFrame;
 	}
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+	if (self.disableTapToDismiss) {
+		[super touchesBegan:touches withEvent:event];
+		return;
+	}
+}
+
+#pragma mark - Private methods
+
+- (void)popAnimationDidStop:(__unused NSString *)animationID finished:(__unused NSNumber *)finished context:(__unused void *)context
+{
+	// At the end set to normal size.
+	[UIView beginAnimations:nil context:nil];
+	[UIView setAnimationDuration:0.1f];
+	self.transform = CGAffineTransformIdentity;
+	[UIView commitAnimations];
+}
+
+- (void)dismissTapAnywhereAction:(id)sender
+{
+
+}
+
+#pragma mark - Public methods
+
+- (void)dismissAfterDelay:(NSTimeInterval)delay animated:(BOOL)animated
+{
+
+}
+
+- (void)dismissAnimated:(BOOL)animated
+{
+
+}
+
+- (void)presentFromBarButtonItem:(UIBarButtonItem *)barButtonItem animated:(BOOL)animated
+{
+
+}
+
+- (void)presentFromView:(UIView *)anchorView inView:(UIView *)containerView animated:(BOOL)animated
+{
+	if (!self.targetObject) {
+		self.targetObject = anchorView;
+	}
+
+	// If we want to dismiss the tooltip when the user taps anywhere on the screen,
+	// we need to insert a transparent button over the background.
+	if (self.dismissTapAnywhere) {
+		self.dismissTarget = [UIButton buttonWithType:UIButtonTypeCustom];
+		self.dismissTarget.frame = containerView.bounds;
+		[self.dismissTarget addTarget:self action:@selector(dismissTapAnywhereAction:) forControlEvents:UIControlEventTouchUpInside];
+		[self.dismissTarget setTitle:@"" forState:UIControlStateNormal];
+		[containerView addSubview:self.dismissTarget];
+	}
+
+	[containerView addSubview:self];
+
+	// Size of rounded rect.
+	CGFloat rectWidth;
+	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+		if (self.maximumWidth > 0.0f && self.maximumWidth < containerView.frame.size.width) {
+			rectWidth = self.maximumWidth;
+		} else if (self.maximumWidth > 0.0f) {
+			rectWidth = containerView.frame.size.width - 20.0f;
+		} else {
+			rectWidth = (containerView.frame.size.width / 3.0f);
+		}
+	} else {
+		if (self.maximumWidth > 0.0f && self.maximumWidth < containerView.frame.size.width) {
+			rectWidth = self.maximumWidth;
+		} else if (self.maximumWidth > 0.0f) {
+			rectWidth = containerView.frame.size.width - 10.0f;
+		} else {
+			rectWidth = ((containerView.frame.size.width * 2.0f) / 3.0f);
+		}
+	}
+
+	CGSize textSize = CGSizeZero;
+	if (self.message && self.message.length > 0) {
+		NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+		paragraphStyle.alignment = self.textAlignment;
+		paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
+
+		NSDictionary *attributes = @{ NSFontAttributeName: self.textFont,
+									  NSParagraphStyleAttributeName: paragraphStyle };
+
+		textSize = [self.message boundingRectWithSize:CGSizeMake(rectWidth, 99999.0f)
+											  options:NSStringDrawingUsesLineFragmentOrigin
+										   attributes:attributes
+											  context:nil].size;
+	}
+
+	if (self.customView) {
+		textSize = self.customView.frame.size;
+	}
+
+	if (self.title && self.title.length > 0) {
+		CGSize titleSize;
+		NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+		paragraphStyle.lineBreakMode = NSLineBreakByClipping;
+
+		NSDictionary *attributes = @{ NSFontAttributeName: self.titleFont,
+									  NSParagraphStyleAttributeName: paragraphStyle };
+
+		titleSize = [self.title boundingRectWithSize:CGSizeMake(rectWidth, 99999.0f)
+											 options:kNilOptions
+										  attributes:attributes
+											 context:nil].size;
+
+		if (titleSize.width > textSize.width) {
+			textSize.width = titleSize.width;
+		}
+		textSize.height += titleSize.height;
+	}
+
+	self.tooltipSize = CGSizeMake(textSize.width + (self.cornerRadius * 2.0f), textSize.height + (self.cornerRadius * 2.0f));
+
+	UIView *superview = containerView.superview;
+	if ([superview isKindOfClass:[UIWindow class]]) {
+		superview = containerView;
+	}
+
+	CGPoint anchorRelativeOrigin = [anchorView.superview convertPoint:anchorView.frame.origin toView:superview];
+	CGPoint containerRelativeOrigin = [superview convertPoint:containerView.frame.origin toView:superview];
+
+	CGFloat yPointer = 0.0f; // Coordinate Y of pointer anchor (within containerView).
+	if (anchorRelativeOrigin.y + anchorView.bounds.size.height < containerRelativeOrigin.y) {
+		self.pointDirection = MQTooltipViewPointDirectionUp;
+	} else if (anchorRelativeOrigin.y > containerRelativeOrigin.y + containerView.bounds.size.height) {
+		yPointer = containerView.bounds.size.height;
+		self.pointDirection = MQTooltipViewPointDirectionDown;
+	} else {
+		CGPoint anchorOriginInContainer = [anchorView convertPoint:CGPointZero toView:containerView];
+		CGFloat sizeBelow = containerView.bounds.size.height - anchorOriginInContainer.y;
+
+		switch (self.pointDirection) {
+			case MQTooltipViewPointDirectionUp:
+			{
+				yPointer = anchorOriginInContainer.y;
+				break;
+			}
+			case MQTooltipViewPointDirectionDown:
+			{
+				yPointer = anchorOriginInContainer.y + anchorView.bounds.size.height;
+				break;
+			}
+			case MQTooltipViewPointDirectionLeft:
+			{
+				// TODO:
+				break;
+			}
+			case MQTooltipViewPointDirectionRight:
+			{
+				// TODO:
+				break;
+			}
+			case MQTooltipViewPointDirectionAny:
+			{
+				if (sizeBelow > anchorOriginInContainer.y) {
+					yPointer = anchorOriginInContainer.y + anchorView.bounds.size.height;
+					self.pointDirection = MQTooltipViewPointDirectionUp;
+				} else {
+					yPointer = anchorOriginInContainer.y;
+					self.pointDirection = MQTooltipViewPointDirectionDown;
+				}
+				break;
+			}
+		}
+	}
+
+	CGFloat width = containerView.bounds.size.width;
+	CGPoint point = [anchorView.superview convertPoint:anchorView.center toView:containerView];
+	CGFloat xPoint = point.x;
+	CGFloat xTooltip = xPoint - roundf((self.tooltipSize.width / 2.0f));
+	if (xTooltip < self.horizontalMargins) {
+		xTooltip = self.horizontalMargins;
+	}
+	if (xTooltip + self.tooltipSize.width + self.horizontalMargins > width) {
+		xTooltip = width - self.tooltipSize.width - self.horizontalMargins;
+	}
+	if (xPoint - self.pointerSize < xTooltip + self.cornerRadius) {
+		xPoint = xTooltip + self.cornerRadius + self.pointerSize;
+	}
+	if (xPoint + self.pointerSize > xTooltip + self.tooltipSize.width - self.cornerRadius) {
+		xPoint = xTooltip + self.tooltipSize.width - self.cornerRadius - self.pointerSize;
+	}
+
+	CGFloat height = self.tooltipSize.height + self.pointerSize + 10.0f;
+	CGFloat yTooltip;
+	switch (self.pointDirection) {
+		case MQTooltipViewPointDirectionUp:
+		{
+			yTooltip = self.verticalMargins + yPointer;
+			self.anchorPoint = CGPointMake(xPoint - xTooltip, 0.0f);
+			break;
+		}
+		case MQTooltipViewPointDirectionDown:
+		{
+			yTooltip = self.verticalMargins - height;
+			self.anchorPoint = CGPointMake(xPoint - xTooltip, height - 2.0f);
+			break;
+		}
+		case MQTooltipViewPointDirectionLeft:
+		{
+			// TODO:
+			break;
+		}
+		case MQTooltipViewPointDirectionRight:
+		{
+			// TODO:
+			break;
+		}
+		case MQTooltipViewPointDirectionAny:
+		{
+			// TODO:
+			break;
+		}
+	}
+
+	CGRect frame = CGRectMake(xTooltip - self.horizontalMargins,
+							  yTooltip,
+							  self.tooltipSize.width + (self.horizontalMargins * 2.0f),
+							  height);
+	frame = CGRectIntegral(frame);
+
+	if (animated) {
+		switch (self.animation) {
+			case MQTooltipViewAnimationFade:
+			{
+				// TODO:
+				break;
+			}
+			case MQTooltipViewAnimationPop:
+			{
+				self.frame = frame;
+				self.alpha = 0.5f;
+				self.transform = CGAffineTransformMakeScale(0.75f, 0.75f);
+
+				// Pop animation.
+				[UIView beginAnimations:nil context:nil];
+				[UIView setAnimationDelegate:self];
+				[UIView setAnimationDidStopSelector:@selector(popAnimationDidStop:finished:context:)];
+				[UIView setAnimationDuration:0.15f];
+				self.transform = CGAffineTransformMakeScale(1.1f, 1.1f);
+				self.alpha = 1.0;
+				[UIView commitAnimations];
+				break;
+			}
+			case MQTooltipViewAnimationSlide:
+			{
+				self.alpha = 0.0f;
+				CGRect startFrame = frame;
+				startFrame.origin.y += 10.0f;
+				self.frame = startFrame;
+
+				// Slide animation.
+				[UIView beginAnimations:nil context:nil];
+				self.alpha = 1.0;
+				self.frame = frame;
+				[UIView commitAnimations];
+
+				break;
+			}
+		}
+
+		[self setNeedsDisplay];
+	} else {
+		[self setNeedsDisplay];
+		self.frame = frame;
+	}
+
 }
 
 @end

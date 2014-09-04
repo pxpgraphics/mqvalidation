@@ -7,9 +7,10 @@
 //
 
 #import "MQViewController.h"
+#import "MQTooltipView.h"
 #import "MQValidationManager.h"
 
-@interface MQViewController () <UITextFieldDelegate>
+@interface MQViewController () <MQTooltipViewDelegate, UITextFieldDelegate>
 
 @property (nonatomic, strong) UITextField *nameTextField;
 @property (nonatomic, strong) UITextField *emailTextField;
@@ -48,7 +49,7 @@
 {
 	static CGFloat yOrigin = 35.0f;
 	static MQViewControllerTags tag = MQViewControllerNameTextFieldTag;
-	CGRect frame = CGRectMake(30.0f, yOrigin, 260.0f, 44.0f);
+	CGRect frame = CGRectMake((self.view.frame.size.width / 8.0f), yOrigin, self.view.frame.size.width - (self.view.frame.size.width / 4.0f), 44.0f);
 	UITextField *textField = [[UITextField alloc] initWithFrame:frame];
 	textField.borderStyle = UITextBorderStyleRoundedRect;
 	textField.delegate = self;
@@ -81,6 +82,14 @@
 
 	UIButton *button = (UIButton *)sender;
 	NSLog(@"button = %@", button);
+
+	UITextField *textField = (UITextField *)button.superview;
+	NSString *title = [NSString stringWithFormat:@"%@ is a required field!", textField.placeholder];
+	NSString *message = [NSString stringWithFormat:@"Please update this value to continue."];
+
+	MQTooltipView *tooltipView = [[MQTooltipView alloc] initWithTitle:title message:message];
+	tooltipView.delegate = self;
+	[tooltipView presentFromView:button inView:self.view animated:YES];
 }
 
 - (void)textFieldTextDidChange:(UITextField *)textField;
