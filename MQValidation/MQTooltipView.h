@@ -56,27 +56,28 @@ typedef NS_ENUM(NSUInteger, MQTooltipViewAnimation) {
 
 @interface MQTooltipView : UIView
 
-@property (nonatomic, assign) BOOL dismissTapAnywhere;
-@property (nonatomic, assign, getter = hasGradientBackground) BOOL gradientBackground;
-@property (nonatomic, assign, getter = hasShadow) BOOL shadow;
-@property (nonatomic, assign, getter = isTapToDismissDisabled) BOOL disableTapToDismiss;
-@property (nonatomic, assign, getter = isTranslucent) BOOL translucent;
+@property (nonatomic, assign) BOOL tapAnywhereToDismiss;
 @property (nonatomic, assign) CGFloat borderWidth;
 @property (nonatomic, assign) CGFloat cornerRadius;
-@property (nonatomic, assign) CGFloat horizontalMargins;
+@property (nonatomic, assign) CGFloat horizontalMargin;
 @property (nonatomic, assign) CGFloat maximumWidth;
 @property (nonatomic, assign) CGFloat pointerSize;
-@property (nonatomic, assign) CGFloat verticalMargins;
-@property (nonatomic, assign) CGSize margins;
+@property (nonatomic, assign) CGFloat verticalMargin;
 @property (nonatomic, assign) MQTooltipViewAnimation animation;
 @property (nonatomic, assign) MQTooltipViewPointDirection pointDirection;
+@property (nonatomic, assign) MQTooltipViewPointDirection preferredPointDirection;
 @property (nonatomic, assign) NSTextAlignment textAlignment;
 @property (nonatomic, assign) NSTextAlignment titleAlignment;
-@property (nonatomic, copy) UIColor *borderColor;
-@property (nonatomic, copy) UIColor *textColor;
-@property (nonatomic, copy) UIColor *titleColor;
+@property (nonatomic, assign, getter = hasGradientBackground) BOOL gradientBackground;
+@property (nonatomic, assign, getter = hasShadow) BOOL shadow;
+@property (nonatomic, assign, getter = isTapToDismissEnabled) BOOL enableTapToDismiss;
+@property (nonatomic, assign, getter = isTranslucent) BOOL translucent;
 @property (nonatomic, strong) NSString *message;
 @property (nonatomic, strong) NSString *title;
+@property (nonatomic, strong) UIColor *backgroundColor;
+@property (nonatomic, strong) UIColor *borderColor;
+@property (nonatomic, strong) UIColor *textColor;
+@property (nonatomic, strong) UIColor *titleColor;
 @property (nonatomic, strong) UIFont *textFont;
 @property (nonatomic, strong) UIFont *titleFont;
 @property (nonatomic, strong) UIView *customView;

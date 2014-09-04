@@ -72,6 +72,28 @@
 	return button;
 }
 
+#pragma mark - MQTooltipViewDelegate
+
+- (void)tooltipViewWillPresent:(MQTooltipView *)tooltipView
+{
+	NSLog(@"MQTooltipView will present...");
+}
+
+- (void)tooltipViewDidPresent:(MQTooltipView *)tooltipView
+{
+	NSLog(@"MQTooltipView did present...");
+}
+
+- (void)tooltipViewWillDismiss:(MQTooltipView *)tooltipView
+{
+	NSLog(@"MQTooltipView will dismiss...");
+}
+
+- (void)tooltipViewDidDismiss:(MQTooltipView *)tooltipView
+{
+	NSLog(@"MQTooltipView did dismiss...");
+}
+
 #pragma mark - Private methods
 
 - (void)showTooltip:(id)sender
@@ -88,6 +110,7 @@
 	NSString *message = [NSString stringWithFormat:@"Please update this value to continue."];
 
 	MQTooltipView *tooltipView = [[MQTooltipView alloc] initWithTitle:title message:message];
+	tooltipView.animation = MQTooltipViewAnimationPop;
 	tooltipView.delegate = self;
 	[tooltipView presentFromView:button inView:self.view animated:YES];
 }
