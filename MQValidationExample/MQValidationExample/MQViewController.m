@@ -9,6 +9,9 @@
 #import "MQViewController.h"
 #import "MQTooltipView.h"
 #import "MQValidationManager.h"
+#import "NBAsYouTypeFormatter.h"
+#import "NBPhoneNumber.h"
+#import "NBPhoneNumberUtil.h"
 
 @interface MQViewController () <MQTooltipViewDelegate, UITextFieldDelegate>
 
@@ -123,6 +126,8 @@
 
 	MQValidationManager *validationManager = [MQValidationManager sharedManager];
 	BOOL valid = NO;
+	NSCharacterSet *characterSet;
+	NSString *trimmedText;
 	switch (textField.tag) {
 		case MQViewControllerNameTextFieldTag:
 			valid = [validationManager validateValue:textField.text forKey:kMQValidationManagerNameKey];
@@ -131,7 +136,38 @@
 			valid = [validationManager validateValue:textField.text forKey:kMQValidationManagerEmailAddressKey];
 			break;
 		case MQViewControllerPhoneNumberTextFieldTag:
-			valid = [validationManager validateValue:textField.text forKey:kMQValidationManagerPhoneNumberKey];
+		{
+			NSError *error;
+			NSString *region = nil; // "US" for +1 or "AE" for +971.
+			NBPhoneNumberUtil *phoneNumberUtil = [NBPhoneNumberUtil sharedInstance];
+			NBPhoneNumber *phoneNumber = [phoneNumberUtil parse:textField.text
+												  defaultRegion:region
+														  error:&error];
+
+			NSString *formattedPhoneNumber = [phoneNumberUtil format:phoneNumber numberFormat:NBEPhoneNumberFormatINTERNATIONAL error:&error];
+			NSString *strippedText = [textField.text stringByReplacingOccurrencesOfString:@"+" withString:@""];
+			NSString *initialText = (textField.text.length == 1) ? [NSString stringWithFormat:@"+%@", strippedText] : textField.text;
+			textField.text = ([formattedPhoneNumber isEqualToString:@"(null)"]) ? initialText : formattedPhoneNumber;
+
+			NBAsYouTypeFormatter *formatter = [[NBAsYouTypeFormatter alloc] initWithRegionCode:region];
+			characterSet = [[NSCharacterSet characterSetWithCharactersInString:@"+1234567890"] invertedSet];
+			trimmedText = [formatter inputDigitAndRememberPosition:textField.text];
+			trimmedText = [[trimmedText componentsSeparatedByCharactersInSet:characterSet] componentsJoinedByString:@""];
+
+			if (error && textField.text.length > 10) {
+				[[[UIAlertView alloc] initWithTitle:@"Error!"
+											message:@"Phone number does not appear to be valid."
+										   delegate:nil
+								  cancelButtonTitle:@"OK"
+								  otherButtonTitles:nil] show];
+			} else {
+				NSLog(@"Phone Pretty: %@", formattedPhoneNumber);
+				NSLog(@"Phone Trimmed: %@", trimmedText);
+			}
+
+			valid = [validationManager validateValue:trimmedText forKey:kMQValidationManagerPhoneNumberKey];
+			break;
+		}
 		case MQViewControllerUsernameTextFieldTag:
 			valid = [validationManager validateValue:textField.text forKey:kMQValidationManagerUsernameKey];
 			break;
