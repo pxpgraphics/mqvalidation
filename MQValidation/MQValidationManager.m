@@ -89,12 +89,12 @@ NSString * const kMQValidationManagerUsernameKey = @"kMQValidationManagerUsernam
 
 + (NSString *)passwordRegex
 {
-	return @"^(?=.*\\d+)(?=.*[A-Za-z])[0-9a-zA-Z!@#$%]{6,20}$";
+	return @"^(?=.*\\d+)(?=.*[A-Za-z])[0-9a-zA-Z!@#$%^&*()]{6,20}$";
 }
 
 + (NSString *)phoneNumberRegex
 {
-	return @"^\\+[1-9]{1}[0-9]{10}$";
+	return @"^(\\+[1-9]{1})(\\d{10,15})$";
 }
 
 + (NSString *)usernameRegex
